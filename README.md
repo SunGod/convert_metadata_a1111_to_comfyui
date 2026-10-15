@@ -1,66 +1,184 @@
-# convert_metadata_a1111_to_comfyui #
-**Translates A1111 workflow and image metadata within an existing PNG file into ComfyUI-friendly metadata**
+# A1111 → ComfyUI PNG Metadata Converter
 
+**Version 1.02** · **Python 3.9+** · **Standard library only** · **Windows 10/11 and macOS**
 
-## Summary ##
-This is a handy little Python script that can bulk converts all of the A1111 metadata stored in an existing PNG image file created by A1111, translates that metadata into a ComfyUI-friendly syntax, then adds that new ComfyUI metadata to the existing file. Your existing image file isn't harmed, and no A1111 metadata is lost. And yes, it works on thousands of A1111 images in a single execution!
+`convert_metadata_a1111_to_comfyui.py` converts recognizable **AUTOMATIC1111 (A1111) Stable Diffusion WebUI metadata inside existing PNG files** into native ComfyUI `workflow` and `prompt` metadata. It operates on individual PNGs or large directories without requiring ComfyUI to be installed or running.
 
-Many awesome ComfyUI image library management tools don't read A1111 metadata, so this little gem will help bridge that gap, and make those tools treat A1111 images like they were made in ComfyUI. Think of it as a niche A1111-to-ComfyUI metadata Rosetta Stone.
+A1111 metadata remains in the PNG. The converter **adds** ComfyUI metadata; it does not regenerate images, alter compressed pixel data, or discard existing EXIF data.
 
+> [!IMPORTANT]
+> This is a **PNG metadata converter**, not a JPG-to-PNG image converter. It can process PNGs that were previously converted from JPGs by tools such as XnView MP, **provided recognizable A1111 information survived in their PNG EXIF `UserComment`**.
 
-## The long-winded bit ##
-Do you have a ton of images that you created using A1111, but none of your ComfyUI image library management tools (like Smart Gallery) can read any of the metadata in them? Sure, those tools might be able to see that the images exist, and they may even let you open up the A1111 metadata in them, but if your experience is like mine, then those tools may not give you all the same capabilities that you'd get with images created natively by ComfyUI. Why? Because the way that A1111 and ComfyUI store their image and workflow metadata are totally different. Yes, you can drop images one-by-one into ComfyUI, and it will do it's best to translate the A1111 metadata into something that ComfyUI can use... but you have to do that one by one... what happens when you have 26,000+ images created by A1111? Trust me, you're not going to drag and drop 26,000+ images into ComfyUI one-by-one just to get usable metadata, that's just crazy.
+## What's new in 1.02
 
-Enter this little gem of a Python script. 
+- **PNG EXIF support:** Reads A1111 metadata from either the conventional PNG `parameters` text field or the EXIF `UserComment` embedded in a PNG `eXIf` chunk.
+- **PARTIAL metadata support:** Recognizes A1111 postprocessing-only information, such as `Postprocess upscale by: 4, Postprocess upscaler: 4x-UltraSharp`.
+- **Informational workflows:** For PARTIAL data, writes a vanilla ComfyUI canvas `workflow` containing a **Note** node with the available information, with an empty executable `prompt` (`{}`). It does not invent checkpoints or generation steps.
+- **Notes for unrepresented fields:** For FULL data, adds a Note **only if some original A1111 fields cannot be expressed through the functional nodes**. Cleanly represented workflows do not get an unnecessary Note.
+- **Existing behavior retained:** Same filename, same command-line options, same in-place update, timestamp preservation, and approved `normal` scheduler fallback.
 
+## Requirements
 
-## How to use it ##
-1. Simply save it into the directory with all of your A1111 PNGs. (In my case, I ran it on my ComfyUI output directory, I just moved all my A1111 images there for management simplicity.)
+- **Python 3.9 or newer** (no `pip install` necessary).
+- Read/write permission on each PNG and its directory. Creating backups and staging files needs additional free disk space.
+- Works on Windows 10/11 and macOS; Windows timestamp preservation uses the Win32 API without `pywin32`.
 
-2. Open up a command shell, and then run it on the current directory using:
-  `python.exe convert_metadata_a1111_to_comfyui .` -
-  don't forget that last period within the quotes, you need to tell it to run on the current directory. Your path to python.exe may vary. For ComfyUI portable users on Windows, you may have python at "ComfyUI_windows_portable/python_embeded\python.exe".
-  
-3. This script will scan your entire directory, find all of the PNGs, and then one-by-one it will scan each PNG, and if there's any existing A1111 metadata in the image, the script will translate all that A1111 metadata into new ComfyUI-friendly metadata, and then add in into the existing file.
+Download `convert_metadata_a1111_to_comfyui.py` and place it anywhere convenient. You can run it from a folder containing PNGs, or specify another directory or one image explicitly.
 
-4. If you're using a ComfyUI-based image management library (like [Majoor Assets Manager](https://github.com/MajoorWaldi/ComfyUI-Majoor-AssetsManager) or [Smart Gallery](https://smartgallerydam.com/)), simply refresh/reload the directory you just ran the script against. If you use Smart Gallery, previously for A1111 images you wouldn't get the little "notepad" icon that brings up the metadata organized nice and tidy-like; after this conversion runs (if your A1111 image had valid metadata), you should now see that icon for all successfully converted images. YMMV.
+## Quick start
 
+**Windows (Command Prompt / PowerShell):**
 
-## My results so far ##
-It does a pretty good job! I've run this on 26,000 images, and it's captured every A1111 workflow and translated that into a metadata format that ComfyUI can just load up and use. 
+```cmd
+py convert_metadata_a1111_to_comfyui.py . --backup --verify
+```
 
-*Note: If you have old models, VAEs, LORAs or other things from your A1111 workflow that aren't currently in your ComfyUI install, the script will work fine, but when you try to load the converted image into ComfyUI, it'll flag the missing workflow nodes as needing your attention, just like it normally does when something is missing from the workflow.*
+**macOS (Terminal):**
 
+```bash
+python3 convert_metadata_a1111_to_comfyui.py . --backup --verify
+```
 
-## FAQ ##
+The final `.` means **current directory**. The script scans only that directory unless you supply `--recursive`. Files with extensions other than `.png` (such as JPG, MP4 and `.py`) are ignored during directory scans. PNG extension matching is case-insensitive.
 
-#### Does this support formats other than PNGs exported from A1111? ####
-Not at this time. Although I'm looking into JPGs created by A1111, and will be exploring a similar script to translate metadata from "Draw Things" images into ComfyUI-friendly metadata like this script does. Stay tuned.
+Start with a dry run if you want to preview what will happen:
 
+```cmd
+py convert_metadata_a1111_to_comfyui.py . --dry-run --verbose
+```
 
-#### Does this create a new image? ####
-No. It merely adds ComfyUI-friendly metadata into your existing image file, using the A1111 metadata from that same image file. None of the existing A1111 metadata is touched, this only adds ComfyUI metadata to it.
+For a long-running collection, save an audit CSV:
 
+```cmd
+py convert_metadata_a1111_to_comfyui.py . --backup --verify --report conversion.csv
+```
 
-#### What if my image already has ComfyUI metadata in it? ####
-The script will skip the image and move on. It does not overwrite any existing ComfyUI metadata.
+> [!WARNING]
+> The script modifies eligible **original PNGs in place**. `--backup` is strongly recommended for valuable images. Writes are staged and can be rolled back on ordinary errors, but an unexpected power loss during the in-place write is **not crash-atomic**.
 
+## Metadata the converter can read
 
-#### Does the image quality change? ####
-No. The image data is left completely untouched.
+| Source inside PNG | What is read | Priority |
+| --- | --- | --- |
+| PNG `parameters` (`tEXt`, `iTXt`, or `zTXt`) | A1111 generation infotext and recognized postprocessing fields | **First** |
+| PNG `eXIf` → EXIF `UserComment` | A1111 text retained when a JPG is converted to PNG, including common Unicode and ASCII EXIF encodings | **Fallback when `parameters` is absent** |
 
+If a `parameters` field exists but contains unrecognizable text, the converter **does not silently replace its interpretation with EXIF**; it skips the file. This avoids combining conflicting processing histories. Other EXIF tags, XMP, ICC profiles, ancillary chunks, and original image bytes are preserved, but are **not** themselves interpreted as A1111 generation instructions.
 
-#### Can I still use my A1111-created images in A1111 after I run this script? ####
-Yes! A1111 will just look for the A1111 metadata in the file (which is left untouched by the script), and will ignore any ComfyUI metadata that was added by the script.
+The converter recognizes standard A1111 settings such as prompts, Steps, Sampler, CFG scale, Seed, Size, model/checkpoint name, VAE, CLIP skip, common LoRA tags, some Additional Networks LoRAs, and supported Hires.fix information. It also recognizes characteristic *partial* A1111 fields and postprocessing information. Recognition is heuristic: another tool might write the same labels, and unusual A1111 extensions might not be recognized.
 
+### FULL, PARTIAL, NONE — and errors
 
-#### Is it perfect? ####
-Nope, probably not, but I've not seen it break anything or do anything bad. Thus far it's been happily reliable. If you notice anything, tell me and I'll go beat my AI accordingly. If you're wary, just backup your images first, and if you're really paranoid, feel free to review the source or feed it into your own AI for analysis. 
+| Classification | Definition | Result |
+| --- | --- | --- |
+| **FULL** | Recognizable A1111-style `Steps`, `Sampler`, and `Seed` fields. This **does not guarantee** a complete generation recipe. | Construct a functional ComfyUI graph if required parameters can be mapped; otherwise create an explanatory, Note-only workflow instead of guessing. |
+| **PARTIAL** | Recognizable A1111-related fields, but not the FULL signature (e.g., Extras upscaling metadata). | Create a **Note-only** canvas with the recorded data and an empty executable `prompt`. |
+| **NONE** | No recognizable A1111 generation or postprocessing metadata found in the selected source. Other PNG metadata might exist. | **Skip** without modifying the PNG. |
+| **ERROR** (`failed`) | File could not be processed or safely written. | Record/print an error, and attempt rollback if a write began. |
 
+A `FULL` classification is **not** a claim that an image can be reproduced pixel-for-pixel. A FULL image missing indispensable parameters (for example CFG scale or generation Size) is intentionally represented **informationally**, with the reason recorded, rather than inventing those values.
 
-#### Can I take this code and change it, or include it in my other project? ####
-Uhhh, I guess? If it's something you're doing for free and will share with the community to make their A1111->ComfyUI transitions easier, go for it, just credit me and this repo. If you're intending to include it in something used for commercial purposes, then no - vibe code your own. lol ;-)
+### What gets written
 
+| PNG metadata field | Contents |
+| --- | --- |
+| `workflow` | **ComfyUI canvas JSON** (legacy workflow format 0.4). Functional nodes when supported, plus Note nodes only where useful. |
+| `prompt` | **ComfyUI API graph JSON** for functional workflows. Informational Note nodes are **not** executable nodes; Note-only workflows use `{}`. |
+| `parameters` | Original A1111 text is **left unchanged** if present. If A1111 text came from EXIF and `parameters` is absent, the decoded text is copied into a new `parameters` field. |
+| `eXIf` and all other original chunks | **Preserved byte-for-byte** (apart from replacement/removal of converter-owned `workflow`, `prompt`, and legacy `a1111_import` text fields when overwriting). |
 
-#### Was this vibe coded ####
-Yes, it was. Look, I just wanted something to get the job done so I could get back to working in ComfyUI. I've used it on 26,000+ images and have had zero problems with image quality, data or performance, so for me it's been awesome. I get that some people may not like this, and I get it, I build complex products for a living, but bro, I have better things to do than learn Python just to build a script that I knocked out with ChatGPT and tested within a 3 hour period. If it helps you, great! If it offends you, I hope you have a nice day! 
+The original compressed `IDAT` image data is copied unchanged: **no re-encoding, resizing, or loss of image quality**.
+
+### What you see in ComfyUI
+
+- **FULL / functional:** Checkpoint loader, CLIP prompt encoding, sampler, latent/decoding/save nodes, and supported additional nodes; an informational Note appears only if original settings were not represented.
+- **PARTIAL or unbuildable FULL:** A Note describing what was actually recorded, without a fabricated model or executable generation pipeline. You can read this on the canvas, but **cannot queue it to recreate the image**.
+- **NONE:** The image is unchanged and the converter does not add workflow metadata.
+
+The Note node is built into vanilla ComfyUI; no custom nodes or companion extension are required. ComfyUI must still have the referenced model/LoRA/VAE files to execute a reconstructed graph. **Automated JSON validation is not a substitute for testing drag-and-drop in your installed ComfyUI version.** Some third-party image browsers may show `prompt` metadata but not canvas-only Notes.
+
+## Command-line reference
+
+| Argument | Description |
+| --- | --- |
+| `path` | **Required**: PNG filename or directory. Use `.` for current directory. |
+| `--recursive`, `-r` | Include subdirectories (off by default). |
+| `--backup` | Keep original copies as `image.bak1.png`, `image.bak2.png`, etc. Backups are excluded from subsequent folder scans. |
+| `--dry-run` | Check files and build/validate prospective workflows **without writing any image or report file**. |
+| `--overwrite` | Rebuild/replace existing ComfyUI `workflow`/`prompt` metadata; also removes obsolete converter-created `a1111_import` text entries. Off by default. |
+| `--model-ext {.safetensors,.ckpt}` | File extension appended to model/LoRA/VAE names that lack one (default `.safetensors`). Filename mapping is a **guess**, not a hash-based model lookup. |
+| `--mode {auto,txt2img,img2img,inpaint}` | Select or override generation mode for functional FULL workflows. Default `auto` uses clues in A1111 settings. Does not fabricate FULL metadata from PARTIAL. |
+| `--verbose`, `-v` | Print each file's status and conversion warnings/notes. |
+| `--no-progress` | Suppress progress bar (summary still printed). |
+| `--quiet` | Show only errors and totals. |
+| `--verify` | Re-read converted files and verify ComfyUI JSON/links, original metadata, non-owned PNG chunks, and **compressed `IDAT` bytes**. Also checks timestamps; date checks always occur even without this switch. Does not run ComfyUI. |
+| `--report FILE` | Write CSV with path, conversion result, FULL/PARTIAL/NONE, metadata source, workflow type, nodes, notes and errors. **Cannot be combined with `--dry-run`**. |
+| `--version` | Print script version (`1.02`). |
+| `--help`, `-h` | Show usage and all options. |
+
+### More examples
+
+```cmd
+rem Process one image
+py convert_metadata_a1111_to_comfyui.py "C:\Images\portrait.png" --backup --verify
+
+rem Process a folder tree
+py convert_metadata_a1111_to_comfyui.py "C:\Images" --recursive --backup --verify
+
+rem Replace older generated ComfyUI metadata in existing PNGs
+py convert_metadata_a1111_to_comfyui.py . --overwrite --backup --verify
+
+rem Show detailed output without a progress bar
+py convert_metadata_a1111_to_comfyui.py . --verbose --no-progress
+```
+
+On macOS, substitute `python3` for `py` and use macOS paths. For portable ComfyUI installations on Windows, you can use their bundled Python interpreter if it supports Python 3.9+.
+
+## Safety and limits
+
+- Files are **updated in place**, preserving their filesystem identity. On Windows the script preserves **Date Created, Date Modified, and Date Accessed** through Win32 `GetFileTime`/`SetFileTime`; on macOS it preserves access and modification times. The behavior of Explorer's generic **Date** column depends on which date Windows selects for the file.
+- `--backup` keeps an original independent copy; without it, a temporary rollback copy is created during conversion and removed after success. **Backups need disk space.** A power failure may interrupt an in-place write.
+- Original EXIF/PNG metadata and compressed pixels are preserved; the converter does **not** claim to recreate all original source images, masks, ControlNet settings, ADetailer passes, proprietary upscalers, or extension behavior.
+- **Approved scheduler fallback retained:** Where the A1111 scheduler has no known ComfyUI mapping, `normal` is used as a compatibility default. This is **not** a claim that A1111 originally used `normal`. The original A1111 metadata is still retained.
+- Unknown samplers and unsupported Hires.fix upscalers are **not** silently swapped for unrelated algorithms. Unsupported Hires.fix operations are described in Notes rather than fabricated as equivalent nodes.
+- The script does not download model files or verify that referenced checkpoint names exist in your ComfyUI installation.
+- The converter can detect the same **A1111-style metadata patterns** as the companion JPG metadata scanner, but it does **not** process JPGs directly. Convert JPG to PNG externally first, preserving EXIF if you need that metadata.
+
+## FAQ
+
+### Does this support formats other than PNGs exported from A1111?
+
+**It processes PNG files only**, including A1111-origin PNGs and PNGs made from JPEGs by third-party tools **when their A1111 EXIF `UserComment` survives**. It does not open or convert JPGs directly. Other image generators, including Draw Things, are separate conversion projects; their metadata is not automatically supported just because the image is a PNG.
+
+### Does this create a new image?
+
+**No.** It adds metadata to the original PNG **in place**, preserving the compressed image data. Use `--backup` if you want a separate original copy (for example `image.bak1.png`). No newly rendered image is generated.
+
+### What if my image already has ComfyUI metadata in it?
+
+By default, the converter **skips** it if either `workflow` or `prompt` exists. Use `--overwrite` to replace those fields with a new conversion from the preserved A1111 metadata. Back up the original before overwriting information you care about.
+
+### Does the image quality change?
+
+**No.** The script never decodes or re-encodes pixels and verifies that the original compressed `IDAT` stream is unchanged when `--verify` is enabled. File size can increase because metadata is added.
+
+### Can I still use my A1111-created images in A1111 after I run this script?
+
+**Yes, the original A1111 `parameters` text is retained unchanged**, and existing EXIF is preserved. ComfyUI `workflow`/`prompt` fields are added alongside it. For third-party PNGs where A1111 data originally existed only in EXIF, the script also creates a standard `parameters` field. Compatibility with every A1111 version or third-party extension cannot be guaranteed.
+
+### Is it perfect?
+
+**No.** It reconstructs a useful approximation, not the exact historical graph. Missing original source images/masks, different model files, A1111 extensions, samplers, upscalers, and random-number behavior can prevent exact replay. Incomplete metadata becomes an informational Note, **not made-up parameters**. Test on representative images before running a large collection; use `--backup --verify` and the CSV report.
+
+### Can I take this code and change it, or include it in my other project?
+
+The repository's prior FAQ welcomed **free, community-oriented reuse with attribution** and did **not** grant commercial reuse. However, as of this README update, the repository does not publish a separate `LICENSE` file. **Do not assume broad redistribution/commercial rights from the absence of a license.** For unambiguous permissions, the repository owner should publish a formal license or grant permission directly.
+
+### Was this vibe coded?
+
+**Yes.** The project was developed with AI assistance and checked against real A1111 files and ComfyUI metadata formats. As with any utility that edits a collection of images, review the code if required for your environment, test a representative sample, and keep backups.
+
+---
+
+**Project:** https://github.com/SunGod/convert_metadata_a1111_to_comfyui  
+**Script:** `convert_metadata_a1111_to_comfyui.py` · **Release:** 1.02
