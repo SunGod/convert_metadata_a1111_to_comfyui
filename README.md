@@ -1,5 +1,5 @@
 # convert_metadata_a1111_to_comfyui #
-* Translates A1111 workflow and image metadata within an existing PNG file into ComfyUI-friendly metadata *
+Translates A1111 workflow and image metadata within an existing PNG file into ComfyUI-friendly metadata
 
 
 ## Summary ##
