@@ -3,7 +3,9 @@ Translates A1111 workflow and image metadata within an existing PNG file into Co
 
 
 ## Summary ##
-This is a handy little Python script that converts the A1111 metadata stored in a PNG image file and converts it all into ComfyUI-friendly metadata format. Many awesome ComfyUI image library management tools don't read A1111 metadata, so this little gem will help bridge that gap, and make those tools treat A1111 images like they were made in ComfyUI. Think of it as a niche A1111-to-ComfyUI metadata Rosetta Stone.
+This is a handy little Python script that can bulk converts all of the A1111 metadata stored in an existing PNG image file created by A1111, translates that metadata into a ComfyUI-friendly syntax, then adds that new ComfyUI metadata to the existing file. Your existing image file isn't harmed, and no A1111 metadata is lost. And yes, it works on thousands of A1111 images in a single execution!
+
+Many awesome ComfyUI image library management tools don't read A1111 metadata, so this little gem will help bridge that gap, and make those tools treat A1111 images like they were made in ComfyUI. Think of it as a niche A1111-to-ComfyUI metadata Rosetta Stone.
 
 
 ## The long-winded bit ##
