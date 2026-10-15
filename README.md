@@ -33,23 +33,26 @@ Note: If you have old models, VAEs, LORAs or other things from your A1111 workfl
 
 
 ## FAQ ##
-Q: Does this create a new image?
-A: No. It merely adds ComfyUI-friendly metadata into your existing image file, using the A1111 metadata from that same image file. None of the existing A1111 metadata is touched, this only adds ComfyUI metadata to it.
+* Q: Does this create a new image?
+* A: No. It merely adds ComfyUI-friendly metadata into your existing image file, using the A1111 metadata from that same image file. None of the existing A1111 metadata is touched, this only adds ComfyUI metadata to it.
 
-Q: Does the image quality change? 
-A: No. The image data is left completely untouched.
+* Q: Does the image quality change? 
+* A: No. The image data is left completely untouched.
 
-Q: Can I still use my A1111-created images in A1111 after I run this script?
-A: Yes! A1111 will just look for the A1111 metadata in the file (which is left untouched by the script), and will ignore any ComfyUI metadata that was added by the script.
+* Q: Can I still use my A1111-created images in A1111 after I run this script?
+* A: Yes! A1111 will just look for the A1111 metadata in the file (which is left untouched by the script), and will ignore any ComfyUI metadata that was added by the script.
 
-Q: Was this vibe coded?
-A: Yes, it was. Look, I just wanted something to get the job done so I could get back to working in ComfyUI. I've used it on 26,000+ images and have had zero problems with image quality, data or performance, so for me it's been awesome. I get that some people may not like this, and I get it, but I have better things to do than learn Python just to build a script that I knocked out with ChatGPT and tested within a 3 hour period. If it helps you, great! If it offends you, I hope you have a nice day! 
+* Q: Was this vibe coded?
+* A: Yes, it was. Look, I just wanted something to get the job done so I could get back to working in ComfyUI. I've used it on 26,000+ images and have had zero problems with image quality, data or performance, so for me it's been awesome. I get that some people may not like this, and I get it, but I have better things to do than learn Python just to build a script that I knocked out with ChatGPT and tested within a 3 hour period. If it helps you, great! If it offends you, I hope you have a nice day! 
 
-Q: Can I take this code and change it, or include it in my other project?
-A: Uhhh, I guess? If it's something you're doing for free and will share with the community to make their A1111->ComfyUI transitions easier, go for it, just credit me and this repo. If you're intending to include it in something used for commercial purposes, then no - vibe code your own. lol ;-)
+* Q: Can I take this code and change it, or include it in my other project?
+* A: Uhhh, I guess? If it's something you're doing for free and will share with the community to make their A1111->ComfyUI transitions easier, go for it, just credit me and this repo. If you're intending to include it in something used for commercial purposes, then no - vibe code your own. lol ;-)
 
-Q: What if my image already has ComfyUI metadata in it? 
-A: The script will skip the image and move on. It does not overwrite any existing ComfyUI metadata.
+* Q: What if my image already has ComfyUI metadata in it? 
+* A: The script will skip the image and move on. It does not overwrite any existing ComfyUI metadata.
 
-Q: Is it perfect?
-A: No, probably not, but I've not seen it break anything or do anything bad. Thus far it's been happily reliable. If you notice anything, tell me and I'll go beat my AI accordingly.
+* Q: Is it perfect?
+* A: No, probably not, but I've not seen it break anything or do anything bad. Thus far it's been happily reliable. If you notice anything, tell me and I'll go beat my AI accordingly.
+
+* Q: Does this support formats other than PNGs exported from A1111?
+* A: Not at this time. Although I'm looking into JPGs created by A1111, and will be exploring a similar script to translate metadata from "Draw Things" images into ComfyUI-friendly metadata like this script does. Stay tuned.
