@@ -1,7 +1,18 @@
+<img src="images/image_library_rescue_banner.jpg" alt="A1111 to ComfyUI Metadata Converter" width="100%">
+
+
 # A1111 → ComfyUI PNG Metadata Converter
+**A standalone Python script that converts A1111 metadata in existing PNG files into ComfyUI-compatible metadata and workflows.**
 
-**Version 1.02** · **Python 3.9+** · **Standard library only** · **Windows 10/11 and macOS**
+*Version 1.02* · Python 3.9+ · *Windows 10/11 and macOS*
 
+
+## What Is This? 
+Got a ton of images you created with A1111, but your ComfyUI image management tools can't make much sense of the metadata in them? That's because A1111 and ComfyUI store their image and workflow information differently, and nobody wants to drag thousands of images into ComfyUI one by one just to fix that. This handy little Python script scans your PNGs in bulk, reads whatever A1111 metadata it finds (even if it's tucked away in EXIF), translates it into ComfyUI-friendly metadata, and adds it right into your existing image files. Your original images and A1111 metadata are left untouched, and when there isn't enough information to reconstruct a complete workflow, the script preserves what it can rather than making stuff up. The result? Your existing A1111 image collection becomes a whole lot more useful in ComfyUI and compatible image library management tools, without spending the rest of your life manually converting metadata. Think of it as a little A1111-to-ComfyUI metadata Rosetta Stone!
+
+
+
+## What It Does
 `convert_metadata_a1111_to_comfyui.py` converts recognizable **AUTOMATIC1111 (A1111) Stable Diffusion WebUI metadata inside existing PNG files** into native ComfyUI `workflow` and `prompt` metadata. It operates on individual PNGs or large directories without requiring ComfyUI to be installed or running.
 
 A1111 metadata remains in the PNG. The converter **adds** ComfyUI metadata; it does not regenerate images, alter compressed pixel data, or discard existing EXIF data.
