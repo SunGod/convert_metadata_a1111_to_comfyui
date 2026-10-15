@@ -1,5 +1,5 @@
 # convert_metadata_a1111_to_comfyui #
-Translates A1111 workflow and image metadata within an existing PNG file into ComfyUI-friendly metadata
+*Translates A1111 workflow and image metadata within an existing PNG file into ComfyUI-friendly metadata*
 
 
 ## Summary ##
@@ -18,8 +18,8 @@ Enter this little gem of a Python script.
 1. Simply save it into the directory with all of your A1111 PNGs. (In my case, I ran it on my ComfyUI output directory, I just moved all my A1111 images there for management simplicity.)
 
 2. Open up a command shell, and then run it on the current directory using:
-  "python.exe convert_metadata_a1111_to_comfyui ."
-  Don't forget that last period within the quotes, you need to tell it to run on the current directory. Your path to python.exe may vary. For ComfyUI portable users on Windows, you may have python at "ComfyUI_windows_portable/python_embeded\python.exe".
+  `python.exe convert_metadata_a1111_to_comfyui .` -
+  don't forget that last period within the quotes, you need to tell it to run on the current directory. Your path to python.exe may vary. For ComfyUI portable users on Windows, you may have python at "ComfyUI_windows_portable/python_embeded\python.exe".
   
 3. This script will scan your entire directory, find all of the PNGs, and then one-by-one it will scan each PNG, and if there's any existing A1111 metadata in the image, the script will translate all that A1111 metadata into new ComfyUI-friendly metadata, and then add in into the existing file.
 
@@ -33,23 +33,23 @@ Note: If you have old models, VAEs, LORAs or other things from your A1111 workfl
 
 
 ## FAQ ##
-* Q: Does this create a new image?
-* A: No. It merely adds ComfyUI-friendly metadata into your existing image file, using the A1111 metadata from that same image file. None of the existing A1111 metadata is touched, this only adds ComfyUI metadata to it.
+- Q: Does this create a new image?
+- A: No. It merely adds ComfyUI-friendly metadata into your existing image file, using the A1111 metadata from that same image file. None of the existing A1111 metadata is touched, this only adds ComfyUI metadata to it.
 
-* Q: Does the image quality change? 
-* A: No. The image data is left completely untouched.
+- Q: Does the image quality change? 
+- A: No. The image data is left completely untouched.
 
-* Q: Can I still use my A1111-created images in A1111 after I run this script?
-* A: Yes! A1111 will just look for the A1111 metadata in the file (which is left untouched by the script), and will ignore any ComfyUI metadata that was added by the script.
+- Q: Can I still use my A1111-created images in A1111 after I run this script?
+- A: Yes! A1111 will just look for the A1111 metadata in the file (which is left untouched by the script), and will ignore any ComfyUI metadata that was added by the script.
 
-* Q: Was this vibe coded?
-* A: Yes, it was. Look, I just wanted something to get the job done so I could get back to working in ComfyUI. I've used it on 26,000+ images and have had zero problems with image quality, data or performance, so for me it's been awesome. I get that some people may not like this, and I get it, but I have better things to do than learn Python just to build a script that I knocked out with ChatGPT and tested within a 3 hour period. If it helps you, great! If it offends you, I hope you have a nice day! 
+- Q: Was this vibe coded?
+- A: Yes, it was. Look, I just wanted something to get the job done so I could get back to working in ComfyUI. I've used it on 26,000+ images and have had zero problems with image quality, data or performance, so for me it's been awesome. I get that some people may not like this, and I get it, but I have better things to do than learn Python just to build a script that I knocked out with ChatGPT and tested within a 3 hour period. If it helps you, great! If it offends you, I hope you have a nice day! 
 
-* Q: Can I take this code and change it, or include it in my other project?
-* A: Uhhh, I guess? If it's something you're doing for free and will share with the community to make their A1111->ComfyUI transitions easier, go for it, just credit me and this repo. If you're intending to include it in something used for commercial purposes, then no - vibe code your own. lol ;-)
+- Q: Can I take this code and change it, or include it in my other project?
+- A: Uhhh, I guess? If it's something you're doing for free and will share with the community to make their A1111->ComfyUI transitions easier, go for it, just credit me and this repo. If you're intending to include it in something used for commercial purposes, then no - vibe code your own. lol ;-)
 
-* Q: What if my image already has ComfyUI metadata in it? 
-* A: The script will skip the image and move on. It does not overwrite any existing ComfyUI metadata.
+- Q: What if my image already has ComfyUI metadata in it? 
+- A: The script will skip the image and move on. It does not overwrite any existing ComfyUI metadata.
 
 * Q: Is it perfect?
 * A: No, probably not, but I've not seen it break anything or do anything bad. Thus far it's been happily reliable. If you notice anything, tell me and I'll go beat my AI accordingly.
