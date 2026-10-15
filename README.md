@@ -1,6 +1,6 @@
 # convert_metadata_a1111_to_comfyui #
 
-## The TLDR: Translates A1111 PNG image metadata into ComfyUI-friendly metadata ##
+The TLDR: Translates A1111 PNG image metadata into ComfyUI-friendly metadata
 
 
 ## Summary ##
